@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>杜杜的地下室</title>
+        <link>https://justindu1017.github.io/</link>
+        <description>Recent content on 杜杜的地下室</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Tue, 02 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://justindu1017.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>JS 的 Callback, Promise 與 Async/Await -- Callback 篇</title>
+        <link>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/</link>
+        <pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/</guid>
+        <description>&lt;h3 id=&#34;js-啥時執行搞不清&#34;&gt;JS 啥時執行，搞不清?&lt;/h3&gt;
+&lt;p&gt;在我們正式開始這次的議題前，我們先來針對以下的程式碼進行一次簡單的示範&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;err&#34;&gt;#&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;JavaScript&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;let&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;setTimeout&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;TO&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;上面這串 JS，你認為輸出為何呢&lt;/p&gt;
+&lt;p&gt;A. 每兩秒鐘 log 出一個數字&lt;br&gt;
+B. 2 秒鐘後一次 log 出 6 個數字&lt;/p&gt;
+&lt;p&gt;對於較沒基礎的朋友來說，有很高的機會選擇 A ，對其他語言來說有可能真的是正確的，但對 JS 來說正確答案應該為 B&lt;br&gt;
+肯定很好奇為甚麼吧? 在這之前，必須先看這部 &lt;a class=&#34;link&#34; href=&#34;https://youtu.be/8aGhZQkoFbQ&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;影片&lt;/a&gt;&lt;br&gt;
+原則上看完應該就會了 7、8 成了，以下我們會利用上述影片進行觀念的引導，所以請一定要先看過影片唷~&lt;/p&gt;
+&lt;h3 id=&#34;callback&#34;&gt;Callback&lt;/h3&gt;
+&lt;p&gt;Callback 以較直白的解釋就是「Function 去 call Function」&lt;br&gt;
+舉例而言，這邊我創了兩個 Function，並希望輸出順序為:First-&amp;gt;second&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;mainFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;First&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;callBackFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;second&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;nx&#34;&gt;mainFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;callBackFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// 輸出為:
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// First
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// second
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看起來沒甚麼問題，但假設今天我們這樣改這樣寫&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;mainFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;First&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;callBackFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;second&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;nx&#34;&gt;callBackFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;mainFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// 輸出為:
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// second
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// First
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看起來不對，但還在預期之內，畢竟我們是先呼叫 callBackFunc()在呼叫 mainFunc()。&lt;br&gt;
+那假如我們假設 mainFunc();會稍微執行一小段時間才會完成呢?
+這件事是非常常發生的，可能是因為它內部的程式本來就很大需要執行一小段時間、也可能是因為它是 api，需要透過網路，而這之間就會產生時間的等待，所以我們要特別注意這類型的情況。
+這邊我們用一個 setTimeout()來實現等待的情境
+這邊先說明一下:setTimeout()在 w3school 的定義如下圖
+&lt;figure style=&#34;flex-grow: 729; flex-basis: 1749px&#34;&gt;
+		&lt;a href=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/setTimeoutDefinition.jpg&#34; data-size=&#34;1152x158&#34;&gt;&lt;img src=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/setTimeoutDefinition.jpg&#34;
+				srcset=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/setTimeoutDefinition_hu00939271bf50d06afdc8096137465825_21643_480x0_resize_q75_box.jpg 480w, https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/setTimeoutDefinition_hu00939271bf50d06afdc8096137465825_21643_1024x0_resize_q75_box.jpg 1024w&#34;
+				width=&#34;1152&#34;
+				height=&#34;158&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;w3school 針對 setTimeout的定義&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;w3school 針對 setTimeout的定義&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;其中比較常見的用法為:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 等待五秒後執行func()
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;setTimeout&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;/*要做的Func*/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;5000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;所以我們假設我們的 mainFunc()執行到完成需要花費五秒，我們將我們的程式加入 setTimeout 來實現等待&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;mainFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;setTimeout&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;foo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;First&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;5000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;callBackFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;second&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;nx&#34;&gt;mainFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;callBackFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// 輸出為:
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// second
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// 五秒鐘後:First
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;震驚！明明我先呼叫 mainFunc();，為什麼會先 log 出 second 呢?&lt;br&gt;
+會造成這個結果的原因如下:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;我們的 mainFunc() 需要經過一較長時間的等待&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;根據上面的影片(假設你有看完的話)，setTimeout 屬於一種 web api&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;根據影片中的解釋，我們可以用較簡單的方式看待 JS 的運作與 event loop 的運作&lt;br&gt;
+也就是下圖
+&lt;figure style=&#34;flex-grow: 103; flex-basis: 249px&#34;&gt;
+		&lt;a href=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/eventloop.jpg&#34; data-size=&#34;1061x1022&#34;&gt;&lt;img src=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/eventloop.jpg&#34;
+				srcset=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/eventloop_hu26aab220ea08b6152dc4baec0a61cceb_47490_480x0_resize_q75_box.jpg 480w, https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/eventloop_hu26aab220ea08b6152dc4baec0a61cceb_47490_1024x0_resize_q75_box.jpg 1024w&#34;
+				width=&#34;1061&#34;
+				height=&#34;1022&#34;
+				loading=&#34;lazy&#34;
+				&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;影片中有提到我們可以將 JS 的運行分為三個區塊:Stack、webapi(web 端就是瀏覽器、在 node 中是 C++ api)、task queue\&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;當我們的 JS 在運行時，他會先把一行一行讀下來並把東西放在 stack 中，當前沒有其他東西去 block 住時，
+會優先將 Stack 中的東西運行完成並在繼續執行下一行的東西。&lt;/li&gt;
+&lt;li&gt;當發現屬於 webapi 的物件或是方法時，物件會交由瀏覽器持續執行，並於執行完後將東西或是結果放到我們的將東西或是結果放到我們的 task queue 中。這邊可以先暫時把 webapi 想成一個執行的區域，對新手來說會一個比較好思考的方法&lt;/li&gt;
+&lt;li&gt;其中 event loop 會觀察 stack 中是否為空且 task queue 是否有東西，若狀況成立就會將 task queue 中的東西推到 stack 中&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;我們觀察一下我們的 code:前面的兩個 function 為定義，所以沒有輸出。\&lt;/p&gt;
+&lt;p&gt;接著我們遇到了 mainFunc()，而且裡面有一個 setTimeout 屬於 webapi，他暫時被交由 webapis 專屬執行區 執行 5 秒的動作，做完之後會被推到 task queue 中等待 stack 中沒有東西時被 event loop 推上 stack 中執行\&lt;/p&gt;
+&lt;p&gt;當然，我們很快地遇到接下來的 callBackFunc()呼叫，他有一個 console.log，不屬於 webapi 的範圍，因此他就順理成章地先 log 出來了
+稍微多等一下 mainFunc 的東西也差不多跑好了，stack 中也沒東西要執行的了，所以會被推上去並且 log 出來&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;webapi 的東西必須等到 stack 中是空的並且自身已經執行完畢存在於 task queue，會由 event loop 推上 stack 中執行&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;所以現在我們終於知道位什麼輸出為&lt;br&gt;
+second
+五秒鐘後:First&lt;/p&gt;
+&lt;p&gt;這時你一定會問:那要怎麼修改才能在保留 setTimeout 的特性，並使輸出為: 五秒鐘後 First -&amp;gt; second 呢?&lt;br&gt;
+這時就需要借助到我們這次的主題:Callback Function 回呼函式&lt;/p&gt;
+&lt;h3 id=&#34;callback-function-回呼函式-實戰&#34;&gt;Callback Function 回呼函式 實戰&lt;/h3&gt;
+&lt;p&gt;前面我們有提到:Callback 以較直白的解釋就是「Function 去 call Function」
+也就是類似這樣&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;cb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;c1&#34;&gt;//do something
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;this is function a&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;cb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;this is function b&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;我們在這邊將我們的 b 在 a 中呼叫，這就是 Callback 的概念
+那所以我們在改我們的程式時其實是有很多種改法的，這邊我示範一個我的改法，&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;mainFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;cb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;setTimeout&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;TO&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;First&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;nx&#34;&gt;cb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;5000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;callBackFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;second&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;nx&#34;&gt;mainFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;callBackFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// 輸出為:
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// 五秒鐘後:First
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// second
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;我們成功的 print 出我們要的東西了，稍微解釋一下他是怎麼運作的吧
+我們一層一層看，首先是兩個 function 的定義，就純粹是在定義所以沒什麼事情發生&lt;br&gt;
+接下來我們看到了 mainFunc(callBackFunc);，他帶入一個參數 callBackFunction，也就是我們定義的一個 function&lt;br&gt;
+在我們執行 mainFunc 時，一進去我們就遇到一個 setTimeout，他帶的 function 是 TO。而且 setTimeout 是一個 webapi，因此我們讓他跑進 webapi 專屬執行區 的地方開始跑五秒&lt;br&gt;
+&lt;figure style=&#34;flex-grow: 103; flex-basis: 249px&#34;&gt;
+		&lt;a href=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/firstStep.jpg&#34; data-size=&#34;1061x1022&#34;&gt;&lt;img src=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/firstStep.jpg&#34;
+				srcset=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/firstStep_huf40f746ebdb62f16769e0fd12be807e4_59156_480x0_resize_q75_box.jpg 480w, https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/firstStep_huf40f746ebdb62f16769e0fd12be807e4_59156_1024x0_resize_q75_box.jpg 1024w&#34;
+				width=&#34;1061&#34;
+				height=&#34;1022&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;setTimeout被丟到webapi 專屬執行區執行等待5秒&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;setTimeout被丟到webapi 專屬執行區執行等待5秒&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;五秒鐘後裡面的 setTimeout 也執行完了，就會把 TO 丟到 task queue 並等待 Stack 中為空
+&lt;figure style=&#34;flex-grow: 103; flex-basis: 249px&#34;&gt;
+		&lt;a href=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/secondStep.jpg&#34; data-size=&#34;1061x1022&#34;&gt;&lt;img src=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/secondStep.jpg&#34;
+				srcset=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/secondStep_huf40f746ebdb62f16769e0fd12be807e4_50272_480x0_resize_q75_box.jpg 480w, https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/secondStep_huf40f746ebdb62f16769e0fd12be807e4_50272_1024x0_resize_q75_box.jpg 1024w&#34;
+				width=&#34;1061&#34;
+				height=&#34;1022&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;setTimeout執行完畢並將 TO 丟到task queue&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;setTimeout執行完畢並將 TO 丟到task queue&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;在經過漫長的等待五秒時，Stack 也早就清空了，我們的 TO 也自然而然地被 event loop 推上 stack 中執行&lt;br&gt;
+而在 TO 內我們看到它做了兩件事&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;console.log(&amp;ldquo;First&amp;rdquo;);&lt;/li&gt;
+&lt;li&gt;cb()&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;所以我們就很自然而然地先 log 出 First&lt;br&gt;
+接下來&amp;hellip;注意!這邊就是 callback 的精華!&lt;br&gt;
+我們的 cb()出現了!還記的我說過 callback 其實就是 Function 去 call Function，這邊我們的 function TO 去 call 了 cb()，而 cb 就是，而 cb 就是 callBackFunc()!&lt;br&gt;
+這其實就是 callback 的精華!&lt;br&gt;
+我們這邊的等待五秒，其實就是讓大家(console.log(&amp;ldquo;First&amp;rdquo;)、cb())都一起等五秒在執行。五秒鐘之後再去執行裡面的東西&lt;/p&gt;
+&lt;p&gt;上面舉的另一個例子也可以這樣改寫&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;mainFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;cb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;First&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;cb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;callBackFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;second&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;nx&#34;&gt;mainFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;callBackFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// 輸出為:
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// First
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// second
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;也就正常輸出了!&lt;/p&gt;
+&lt;h3 id=&#34;callback-hell&#34;&gt;callback hell&lt;/h3&gt;
+&lt;p&gt;說道 callback，就不得不說著名的 callback hell&lt;br&gt;
+callback 其實就是 Function 去 call Function，所以下面的範例也是一種 callback&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;a&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;b&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;nx&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;假設我們再加一個 function c，也讓它繼續 callback&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;a&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;());&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;b&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;c&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;nx&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;接著我們再來一個 function d&amp;hellip;然後再來一個 function e&amp;hellip;然後再來一個 function f&amp;hellip;
+恭喜你，你成功創造出一個 callback hell 了!&lt;br&gt;
+&lt;figure style=&#34;flex-grow: 171; flex-basis: 412px&#34;&gt;
+		&lt;a href=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/callBackHell.jpeg&#34; data-size=&#34;721x420&#34;&gt;&lt;img src=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/callBackHell.jpeg&#34;
+				srcset=&#34;https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/callBackHell_hu592c130ab2b5b3844db40d52d29dd73f_66975_480x0_resize_q75_box.jpeg 480w, https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/callBackHell_hu592c130ab2b5b3844db40d52d29dd73f_66975_1024x0_resize_q75_box.jpeg 1024w&#34;
+				width=&#34;721&#34;
+				height=&#34;420&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;callback hell 的經典&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;callback hell 的經典&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;function 一直 call function，會導致一個很嚴重的結果，就是過於雜亂不好整理，寫 code 的人痛苦，看 code 的人更痛苦。&lt;br&gt;
+因此我們需要有一個好辦法來避免這種情況的發生，這就是我們下一次要講的 Promise&lt;/p&gt;
+&lt;p&gt;偷偷據透，在接下來的 promise 與 async/await 講完後，我們會進到 python 的爬蟲唷~(雖然我也不知道要等多久就是了 QQ&lt;br&gt;
+另外，如果有想要一起討論的或是我有說不好的地方，歡迎在下方留言區或是寄信來一起討論唷~~~
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+參考資料:&lt;br&gt;
+&lt;a href=&#34;https://www.w3schools.com/jsref/met_win_settimeout.asp&#34;&gt;https://www.w3schools.com/jsref/met_win_settimeout.asp&lt;/a&gt;
+&lt;a href=&#34;https://www.programiz.com/javascript/examples/pass-parameter-setTimeout&#34;&gt;https://www.programiz.com/javascript/examples/pass-parameter-setTimeout&lt;/a&gt;
+&lt;a href=&#34;https://matthung0807.blogspot.com/2019/05/javascript-callback-callback-function.html&#34;&gt;https://matthung0807.blogspot.com/2019/05/javascript-callback-callback-function.html&lt;/a&gt;
+&lt;a href=&#34;https://developer.mozilla.org/zh-TW/docs/Glossary/Callback_function&#34;&gt;https://developer.mozilla.org/zh-TW/docs/Glossary/Callback_function&lt;/a&gt;
+&lt;a href=&#34;https://www.youtube.com/watch?v=8aGhZQkoFbQ&amp;amp;ab_channel=JSConf&#34;&gt;https://www.youtube.com/watch?v=8aGhZQkoFbQ&amp;amp;ab_channel=JSConf&lt;/a&gt;
+&lt;a href=&#34;https://blog.risingstack.com/node-js-async-best-practices-avoiding-callback-hell-node-js-at-scale/&#34;&gt;https://blog.risingstack.com/node-js-async-best-practices-avoiding-callback-hell-node-js-at-scale/&lt;/a&gt;
+&lt;a href=&#34;https://medium.com/@quyetvv/async-flow-from-callback-hell-to-promise-to-async-await-2da3ecfff997&#34;&gt;https://medium.com/@quyetvv/async-flow-from-callback-hell-to-promise-to-async-await-2da3ecfff997&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>關於這個網站</title>
+        <link>https://justindu1017.github.io/p/%E9%97%9C%E6%96%BC%E9%80%99%E5%80%8B%E7%B6%B2%E7%AB%99/</link>
+        <pubDate>Wed, 24 Feb 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://justindu1017.github.io/p/%E9%97%9C%E6%96%BC%E9%80%99%E5%80%8B%E7%B6%B2%E7%AB%99/</guid>
+        <description>&lt;h1 id=&#34;哈囉感謝你進入這個網站&#34;&gt;哈囉，感謝你進入這個網站&lt;/h1&gt;
+&lt;p&gt;關於我，可以先從 &lt;a class=&#34;link&#34; href=&#34;https://justindu1017.github.io/about/&#34; &gt;這裡&lt;/a&gt; 進行簡單的認識&lt;/p&gt;
+&lt;p&gt;在這個網站中，我會定時(偶爾拖更)在這邊發表我最近學到的東西，用簡單易懂的方式進行講解、盡量讓所有人都能懂
+這個小網站是用 Hugo 配合 github page 架設的，搭配由 Jimmy Cai 所設計的 &lt;a class=&#34;link&#34; href=&#34;https://themes.gohugo.io/hugo-theme-stack/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Stack&lt;/a&gt; 主題&lt;/p&gt;
+&lt;p&gt;其中，特別感謝周家豪學長、洪立恩前輩、陳宇震學長教會我這麼多東西，也促成了這個網站的誕生&lt;/p&gt;
+&lt;p&gt;還有我的女朋友，一直在背後支持著我&lt;/p&gt;
+&lt;p&gt;在這裡，我會觸及到以下的領域 : nodejs, Vue, React, React-Native, Raspberry Pi, python, Verilog, Ubuntu, Unity, LineBot, php, Laravel&amp;hellip;等
+偶爾也會穿插一些非程式的專欄
+當然，我會慢慢更新，畢竟我現在也還在邊學習。如果有特別想聽的部分的話，也可以連絡我讓我知道，或許就會做特別的學習和認識並解說呢~~~&lt;/p&gt;
+&lt;p&gt;現在，就讓我們開始吧!&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

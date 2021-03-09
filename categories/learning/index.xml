@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Learning on 杜杜的地下室</title>
+    <link>https://justindu1017.github.io/categories/learning/</link>
+    <description>Recent content in Learning on 杜杜的地下室</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 02 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://justindu1017.github.io/categories/learning/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>JS 的 Callback, Promise 與 Async/Await -- Callback 篇</title>
+      <link>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/</link>
+      <pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/</guid>
+      <description>JS 啥時執行，搞不清? 在我們正式開始這次的議題前，我們先來針對以下的程式碼進行一次簡單的示範
+#JavaScript; for (let i = 0; i &amp;lt; 6; i++) { setTimeout(function TO() { console.log(i); }, 2000); } 上面這串 JS，你認為輸出為何呢
+A. 每兩秒鐘 log 出一個數字
+B. 2 秒鐘後一次 log 出 6 個數字
+對於較沒基礎的朋友來說，有很高的機會選擇 A ，對其他語言來說有可能真的是正確的，但對 JS 來說正確答案應該為 B
+肯定很好奇為甚麼吧? 在這之前，必須先看這部 影片
+原則上看完應該就會了 7、8 成了，以下我們會利用上述影片進行觀念的引導，所以請一定要先看過影片唷~
+Callback Callback 以較直白的解釋就是「Function 去 call Function」
+舉例而言，這邊我創了兩個 Function，並希望輸出順序為:First-&amp;gt;second
+function mainFunc() { console.log(&amp;#34;First&amp;#34;); } function callBackFunc() { console.log(&amp;#34;second&amp;#34;); } mainFunc(); callBackFunc(); // 輸出為: // First // second 看起來沒甚麼問題，但假設今天我們這樣改這樣寫</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blog on 杜杜的地下室</title>
+    <link>https://justindu1017.github.io/categories/blog/</link>
+    <description>Recent content in Blog on 杜杜的地下室</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 24 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://justindu1017.github.io/categories/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>關於這個網站</title>
+      <link>https://justindu1017.github.io/p/%E9%97%9C%E6%96%BC%E9%80%99%E5%80%8B%E7%B6%B2%E7%AB%99/</link>
+      <pubDate>Wed, 24 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://justindu1017.github.io/p/%E9%97%9C%E6%96%BC%E9%80%99%E5%80%8B%E7%B6%B2%E7%AB%99/</guid>
+      <description>哈囉，感謝你進入這個網站 關於我，可以先從 這裡 進行簡單的認識
+在這個網站中，我會定時(偶爾拖更)在這邊發表我最近學到的東西，用簡單易懂的方式進行講解、盡量讓所有人都能懂 這個小網站是用 Hugo 配合 github page 架設的，搭配由 Jimmy Cai 所設計的 Stack 主題
+其中，特別感謝周家豪學長、洪立恩前輩、陳宇震學長教會我這麼多東西，也促成了這個網站的誕生
+還有我的女朋友，一直在背後支持著我
+在這裡，我會觸及到以下的領域 : nodejs, Vue, React, React-Native, Raspberry Pi, python, Verilog, Ubuntu, Unity, LineBot, php, Laravel&amp;hellip;等 偶爾也會穿插一些非程式的專欄 當然，我會慢慢更新，畢竟我現在也還在邊學習。如果有特別想聽的部分的話，也可以連絡我讓我知道，或許就會做特別的學習和認識並解說呢~~~
+現在，就讓我們開始吧!</description>
+    </item>
+    
+  </channel>
+</rss>

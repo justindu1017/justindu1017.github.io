@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本網站的簡介'><title>JS 的 Callback, Promise 與 Async/Await -- Callback 篇</title>
+
+<link rel='canonical' href='https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='JS 的 Callback, Promise 與 Async/Await -- Callback 篇'>
+<meta property='og:description' content='本網站的簡介'>
+<meta property='og:url' content='https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/'>
+<meta property='og:site_name' content='杜杜的地下室'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='JavaScript' /><meta property='article:published_time' content='2021-03-02T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-03-02T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="JS 的 Callback, Promise 與 Async/Await -- Callback 篇">
+<meta name="twitter:description" content="本網站的簡介">
+    </head>
+    <body class="">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.body.dataset.scheme = 'dark';
+        } else {
+            document.body.dataset.scheme = 'light';
+        }
+    })();
+</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu033864af6a2ccb0547fd16a99eab5113_707854_300x0_resize_q75_box.jpg" width="300"
+                            height="298" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+
+                
+                    <span class="emoji">😎</span>
+                
+            </figure>
+        
+        <h1 class="site-name"><a href="https://justindu1017.github.io/">杜杜的地下室</a></h1>
+        <h2 class="site-description">燃燒自己，直到最後一刻</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        
+            <li id="dark-mode-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <span>Dark Mode</span>
+            </li>
+        
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://justindu1017.github.io/" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/learning/" >
+                Learning
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/">JS 的 Callback, Promise 與 Async/Await -- Callback 篇</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        本網站的簡介
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Mar 02, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <h3 id="js-啥時執行搞不清">JS 啥時執行，搞不清?</h3>
+<p>在我們正式開始這次的議題前，我們先來針對以下的程式碼進行一次簡單的示範</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">#</span><span class="nx">JavaScript</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="nx">TO</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+  <span class="p">},</span> <span class="mi">2000</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p>上面這串 JS，你認為輸出為何呢</p>
+<p>A. 每兩秒鐘 log 出一個數字<br>
+B. 2 秒鐘後一次 log 出 6 個數字</p>
+<p>對於較沒基礎的朋友來說，有很高的機會選擇 A ，對其他語言來說有可能真的是正確的，但對 JS 來說正確答案應該為 B<br>
+肯定很好奇為甚麼吧? 在這之前，必須先看這部 <a class="link" href="https://youtu.be/8aGhZQkoFbQ"  target="_blank" rel="noopener"
+    >影片</a><br>
+原則上看完應該就會了 7、8 成了，以下我們會利用上述影片進行觀念的引導，所以請一定要先看過影片唷~</p>
+<h3 id="callback">Callback</h3>
+<p>Callback 以較直白的解釋就是「Function 去 call Function」<br>
+舉例而言，這邊我創了兩個 Function，並希望輸出順序為:First-&gt;second</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">mainFunc</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;First&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">callBackFunc</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;second&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">mainFunc</span><span class="p">();</span>
+<span class="nx">callBackFunc</span><span class="p">();</span>
+
+<span class="c1">// 輸出為:
+</span><span class="c1">// First
+</span><span class="c1">// second
+</span></code></pre></div><p>看起來沒甚麼問題，但假設今天我們這樣改這樣寫</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">mainFunc</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;First&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">callBackFunc</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;second&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">callBackFunc</span><span class="p">();</span>
+<span class="nx">mainFunc</span><span class="p">();</span>
+
+<span class="c1">// 輸出為:
+</span><span class="c1">// second
+</span><span class="c1">// First
+</span></code></pre></div><p>看起來不對，但還在預期之內，畢竟我們是先呼叫 callBackFunc()在呼叫 mainFunc()。<br>
+那假如我們假設 mainFunc();會稍微執行一小段時間才會完成呢?
+這件事是非常常發生的，可能是因為它內部的程式本來就很大需要執行一小段時間、也可能是因為它是 api，需要透過網路，而這之間就會產生時間的等待，所以我們要特別注意這類型的情況。
+這邊我們用一個 setTimeout()來實現等待的情境
+這邊先說明一下:setTimeout()在 w3school 的定義如下圖
+<figure style="flex-grow: 729; flex-basis: 1749px">
+		<a href="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/setTimeoutDefinition.jpg" data-size="1152x158"><img src="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/setTimeoutDefinition.jpg"
+				srcset="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/setTimeoutDefinition_hu00939271bf50d06afdc8096137465825_21643_480x0_resize_q75_box.jpg 480w, /p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/setTimeoutDefinition_hu00939271bf50d06afdc8096137465825_21643_1024x0_resize_q75_box.jpg 1024w"
+				width="1152"
+				height="158"
+				loading="lazy"
+				alt="w3school 針對 setTimeout的定義">
+		</a>
+		
+		<figcaption>w3school 針對 setTimeout的定義</figcaption>
+		
+	</figure></p>
+<p>其中比較常見的用法為:</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">// 等待五秒後執行func()
+</span><span class="c1"></span><span class="nx">setTimeout</span><span class="p">(</span><span class="cm">/*要做的Func*/</span><span class="p">,</span> <span class="mi">5000</span><span class="p">);</span>
+</code></pre></div><p>所以我們假設我們的 mainFunc()執行到完成需要花費五秒，我們將我們的程式加入 setTimeout 來實現等待</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">mainFunc</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;First&#34;</span><span class="p">);</span>
+  <span class="p">},</span> <span class="mi">5000</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">callBackFunc</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;second&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">mainFunc</span><span class="p">();</span>
+<span class="nx">callBackFunc</span><span class="p">();</span>
+
+<span class="c1">// 輸出為:
+</span><span class="c1">// second
+</span><span class="c1">// 五秒鐘後:First
+</span></code></pre></div><p>震驚！明明我先呼叫 mainFunc();，為什麼會先 log 出 second 呢?<br>
+會造成這個結果的原因如下:</p>
+<ul>
+<li>
+<p>我們的 mainFunc() 需要經過一較長時間的等待</p>
+</li>
+<li>
+<p>根據上面的影片(假設你有看完的話)，setTimeout 屬於一種 web api</p>
+</li>
+</ul>
+<p>根據影片中的解釋，我們可以用較簡單的方式看待 JS 的運作與 event loop 的運作<br>
+也就是下圖
+<figure style="flex-grow: 103; flex-basis: 249px">
+		<a href="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/eventloop.jpg" data-size="1061x1022"><img src="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/eventloop.jpg"
+				srcset="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/eventloop_hu26aab220ea08b6152dc4baec0a61cceb_47490_480x0_resize_q75_box.jpg 480w, /p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/eventloop_hu26aab220ea08b6152dc4baec0a61cceb_47490_1024x0_resize_q75_box.jpg 1024w"
+				width="1061"
+				height="1022"
+				loading="lazy"
+				>
+		</a>
+		
+	</figure></p>
+<p>影片中有提到我們可以將 JS 的運行分為三個區塊:Stack、webapi(web 端就是瀏覽器、在 node 中是 C++ api)、task queue\</p>
+<ol>
+<li>當我們的 JS 在運行時，他會先把一行一行讀下來並把東西放在 stack 中，當前沒有其他東西去 block 住時，
+會優先將 Stack 中的東西運行完成並在繼續執行下一行的東西。</li>
+<li>當發現屬於 webapi 的物件或是方法時，物件會交由瀏覽器持續執行，並於執行完後將東西或是結果放到我們的將東西或是結果放到我們的 task queue 中。這邊可以先暫時把 webapi 想成一個執行的區域，對新手來說會一個比較好思考的方法</li>
+<li>其中 event loop 會觀察 stack 中是否為空且 task queue 是否有東西，若狀況成立就會將 task queue 中的東西推到 stack 中</li>
+</ol>
+<p>我們觀察一下我們的 code:前面的兩個 function 為定義，所以沒有輸出。\</p>
+<p>接著我們遇到了 mainFunc()，而且裡面有一個 setTimeout 屬於 webapi，他暫時被交由 webapis 專屬執行區 執行 5 秒的動作，做完之後會被推到 task queue 中等待 stack 中沒有東西時被 event loop 推上 stack 中執行\</p>
+<p>當然，我們很快地遇到接下來的 callBackFunc()呼叫，他有一個 console.log，不屬於 webapi 的範圍，因此他就順理成章地先 log 出來了
+稍微多等一下 mainFunc 的東西也差不多跑好了，stack 中也沒東西要執行的了，所以會被推上去並且 log 出來</p>
+<blockquote>
+<p>webapi 的東西必須等到 stack 中是空的並且自身已經執行完畢存在於 task queue，會由 event loop 推上 stack 中執行</p>
+</blockquote>
+<p>所以現在我們終於知道位什麼輸出為<br>
+second
+五秒鐘後:First</p>
+<p>這時你一定會問:那要怎麼修改才能在保留 setTimeout 的特性，並使輸出為: 五秒鐘後 First -&gt; second 呢?<br>
+這時就需要借助到我們這次的主題:Callback Function 回呼函式</p>
+<h3 id="callback-function-回呼函式-實戰">Callback Function 回呼函式 實戰</h3>
+<p>前面我們有提到:Callback 以較直白的解釋就是「Function 去 call Function」
+也就是類似這樣</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">a</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">//do something
+</span><span class="c1"></span>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;this is function a&#34;</span><span class="p">);</span>
+  <span class="nx">cb</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">b</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;this is function b&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nx">a</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span>
+</code></pre></div><p>我們在這邊將我們的 b 在 a 中呼叫，這就是 Callback 的概念
+那所以我們在改我們的程式時其實是有很多種改法的，這邊我示範一個我的改法，</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">mainFunc</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="nx">TO</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;First&#34;</span><span class="p">);</span>
+    <span class="nx">cb</span><span class="p">();</span>
+  <span class="p">},</span> <span class="mi">5000</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">callBackFunc</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;second&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">mainFunc</span><span class="p">(</span><span class="nx">callBackFunc</span><span class="p">);</span>
+
+<span class="c1">// 輸出為:
+</span><span class="c1">// 五秒鐘後:First
+</span><span class="c1">// second
+</span></code></pre></div><p>我們成功的 print 出我們要的東西了，稍微解釋一下他是怎麼運作的吧
+我們一層一層看，首先是兩個 function 的定義，就純粹是在定義所以沒什麼事情發生<br>
+接下來我們看到了 mainFunc(callBackFunc);，他帶入一個參數 callBackFunction，也就是我們定義的一個 function<br>
+在我們執行 mainFunc 時，一進去我們就遇到一個 setTimeout，他帶的 function 是 TO。而且 setTimeout 是一個 webapi，因此我們讓他跑進 webapi 專屬執行區 的地方開始跑五秒<br>
+<figure style="flex-grow: 103; flex-basis: 249px">
+		<a href="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/firstStep.jpg" data-size="1061x1022"><img src="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/firstStep.jpg"
+				srcset="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/firstStep_huf40f746ebdb62f16769e0fd12be807e4_59156_480x0_resize_q75_box.jpg 480w, /p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/firstStep_huf40f746ebdb62f16769e0fd12be807e4_59156_1024x0_resize_q75_box.jpg 1024w"
+				width="1061"
+				height="1022"
+				loading="lazy"
+				alt="setTimeout被丟到webapi 專屬執行區執行等待5秒">
+		</a>
+		
+		<figcaption>setTimeout被丟到webapi 專屬執行區執行等待5秒</figcaption>
+		
+	</figure></p>
+<p>五秒鐘後裡面的 setTimeout 也執行完了，就會把 TO 丟到 task queue 並等待 Stack 中為空
+<figure style="flex-grow: 103; flex-basis: 249px">
+		<a href="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/secondStep.jpg" data-size="1061x1022"><img src="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/secondStep.jpg"
+				srcset="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/secondStep_huf40f746ebdb62f16769e0fd12be807e4_50272_480x0_resize_q75_box.jpg 480w, /p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/secondStep_huf40f746ebdb62f16769e0fd12be807e4_50272_1024x0_resize_q75_box.jpg 1024w"
+				width="1061"
+				height="1022"
+				loading="lazy"
+				alt="setTimeout執行完畢並將 TO 丟到task queue">
+		</a>
+		
+		<figcaption>setTimeout執行完畢並將 TO 丟到task queue</figcaption>
+		
+	</figure></p>
+<p>在經過漫長的等待五秒時，Stack 也早就清空了，我們的 TO 也自然而然地被 event loop 推上 stack 中執行<br>
+而在 TO 內我們看到它做了兩件事</p>
+<ol>
+<li>console.log(&ldquo;First&rdquo;);</li>
+<li>cb()</li>
+</ol>
+<p>所以我們就很自然而然地先 log 出 First<br>
+接下來&hellip;注意!這邊就是 callback 的精華!<br>
+我們的 cb()出現了!還記的我說過 callback 其實就是 Function 去 call Function，這邊我們的 function TO 去 call 了 cb()，而 cb 就是，而 cb 就是 callBackFunc()!<br>
+這其實就是 callback 的精華!<br>
+我們這邊的等待五秒，其實就是讓大家(console.log(&ldquo;First&rdquo;)、cb())都一起等五秒在執行。五秒鐘之後再去執行裡面的東西</p>
+<p>上面舉的另一個例子也可以這樣改寫</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">mainFunc</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;First&#34;</span><span class="p">);</span>
+  <span class="nx">cb</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">callBackFunc</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;second&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">mainFunc</span><span class="p">(</span><span class="nx">callBackFunc</span><span class="p">);</span>
+
+<span class="c1">// 輸出為:
+</span><span class="c1">// First
+</span><span class="c1">// second
+</span></code></pre></div><p>也就正常輸出了!</p>
+<h3 id="callback-hell">callback hell</h3>
+<p>說道 callback，就不得不說著名的 callback hell<br>
+callback 其實就是 Function 去 call Function，所以下面的範例也是一種 callback</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">a</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;a&#34;</span><span class="p">);</span>
+  <span class="nx">b</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">b</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;b&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">a</span><span class="p">();</span>
+</code></pre></div><p>假設我們再加一個 function c，也讓它繼續 callback</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">a</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;a&#34;</span><span class="p">);</span>
+  <span class="nx">b</span><span class="p">(</span><span class="nx">c</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">b</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;b&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">c</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;c&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">a</span><span class="p">();</span>
+</code></pre></div><p>接著我們再來一個 function d&hellip;然後再來一個 function e&hellip;然後再來一個 function f&hellip;
+恭喜你，你成功創造出一個 callback hell 了!<br>
+<figure style="flex-grow: 171; flex-basis: 412px">
+		<a href="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/callBackHell.jpeg" data-size="721x420"><img src="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/callBackHell.jpeg"
+				srcset="/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/callBackHell_hu592c130ab2b5b3844db40d52d29dd73f_66975_480x0_resize_q75_box.jpeg 480w, /p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/callBackHell_hu592c130ab2b5b3844db40d52d29dd73f_66975_1024x0_resize_q75_box.jpeg 1024w"
+				width="721"
+				height="420"
+				loading="lazy"
+				alt="callback hell 的經典">
+		</a>
+		
+		<figcaption>callback hell 的經典</figcaption>
+		
+	</figure></p>
+<p>function 一直 call function，會導致一個很嚴重的結果，就是過於雜亂不好整理，寫 code 的人痛苦，看 code 的人更痛苦。<br>
+因此我們需要有一個好辦法來避免這種情況的發生，這就是我們下一次要講的 Promise</p>
+<p>偷偷據透，在接下來的 promise 與 async/await 講完後，我們會進到 python 的爬蟲唷~(雖然我也不知道要等多久就是了 QQ<br>
+另外，如果有想要一起討論的或是我有說不好的地方，歡迎在下方留言區或是寄信來一起討論唷~~~
+<br>
+<br>
+<br>
+<br>
+參考資料:<br>
+<a href="https://www.w3schools.com/jsref/met_win_settimeout.asp">https://www.w3schools.com/jsref/met_win_settimeout.asp</a>
+<a href="https://www.programiz.com/javascript/examples/pass-parameter-setTimeout">https://www.programiz.com/javascript/examples/pass-parameter-setTimeout</a>
+<a href="https://matthung0807.blogspot.com/2019/05/javascript-callback-callback-function.html">https://matthung0807.blogspot.com/2019/05/javascript-callback-callback-function.html</a>
+<a href="https://developer.mozilla.org/zh-TW/docs/Glossary/Callback_function">https://developer.mozilla.org/zh-TW/docs/Glossary/Callback_function</a>
+<a href="https://www.youtube.com/watch?v=8aGhZQkoFbQ&amp;ab_channel=JSConf">https://www.youtube.com/watch?v=8aGhZQkoFbQ&amp;ab_channel=JSConf</a>
+<a href="https://blog.risingstack.com/node-js-async-best-practices-avoiding-callback-hell-node-js-at-scale/">https://blog.risingstack.com/node-js-async-best-practices-avoiding-callback-hell-node-js-at-scale/</a>
+<a href="https://medium.com/@quyetvv/async-flow-from-callback-hell-to-promise-to-async-await-2da3ecfff997">https://medium.com/@quyetvv/async-flow-from-callback-hell-to-promise-to-async-await-2da3ecfff997</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/javascript/">JavaScript</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+</aside>
+
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 杜杜的地下室
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

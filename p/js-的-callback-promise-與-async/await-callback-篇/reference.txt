@@ -1,0 +1,6 @@
+https://www.w3schools.com/jsref/met_win_settimeout.asp
+https://www.programiz.com/javascript/examples/pass-parameter-setTimeout
+https://matthung0807.blogspot.com/2019/05/javascript-callback-callback-function.html
+https://developer.mozilla.org/zh-TW/docs/Glossary/Callback_function
+https://www.youtube.com/watch?v=8aGhZQkoFbQ&ab_channel=JSConf
+https://blog.risingstack.com/node-js-async-best-practices-avoiding-callback-hell-node-js-at-scale/
