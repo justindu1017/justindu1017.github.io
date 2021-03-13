@@ -266,7 +266,7 @@ callback 其實就是 Function 去 call Function，所以下面的範例也是�
 	&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;function 一直 call function，會導致一個很嚴重的結果，就是過於雜亂不好整理，寫 code 的人痛苦，看 code 的人更痛苦。&lt;br&gt;
 因此我們需要有一個好辦法來避免這種情況的發生，這就是我們下一次要講的 Promise&lt;/p&gt;
-&lt;p&gt;偷偷據透，在接下來的 promise 與 async/await 講完後，我們會進到 python 的爬蟲唷~(雖然我也不知道要等多久就是了 QQ&lt;br&gt;
+&lt;p&gt;偷偷劇透，在接下來的 promise 與 async/await 講完後，我們會進到 python 的爬蟲唷~(雖然我也不知道要等多久就是了 QQ&lt;br&gt;
 另外，如果有想要一起討論的或是我有說不好的地方，歡迎在下方留言區或是寄信來一起討論唷~~~
 &lt;br&gt;
 &lt;br&gt;
