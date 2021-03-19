@@ -26,6 +26,15 @@ function mainFunc() { console.log(&amp;#34;First&amp;#34;); } function callBackF
     </item>
     
     <item>
+      <title>JS 的 Callback, Promise 與 Async/Await -- Callback 篇</title>
+      <link>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/</link>
+      <pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/</guid>
+      <description>施工中&amp;hellip;敬請期待~~~~~ </description>
+    </item>
+    
+    <item>
       <title>關於這個網站</title>
       <link>https://justindu1017.github.io/p/%E9%97%9C%E6%96%BC%E9%80%99%E5%80%8B%E7%B6%B2%E7%AB%99/</link>
       <pubDate>Wed, 24 Feb 2021 00:00:00 +0000</pubDate>

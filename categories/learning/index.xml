@@ -25,5 +25,14 @@ Callback Callback 以較直白的解釋就是「Function 去 call Function」
 function mainFunc() { console.log(&amp;#34;First&amp;#34;); } function callBackFunc() { console.log(&amp;#34;second&amp;#34;); } mainFunc(); callBackFunc(); // 輸出為: // First // second 看起來沒甚麼問題，但假設今天我們這樣改這樣寫</description>
     </item>
     
+    <item>
+      <title>JS 的 Callback, Promise 與 Async/Await -- Callback 篇</title>
+      <link>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/</link>
+      <pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/</guid>
+      <description>施工中&amp;hellip;敬請期待~~~~~ </description>
+    </item>
+    
   </channel>
 </rss>
