@@ -283,11 +283,11 @@ callback 其實就是 Function 去 call Function，所以下面的範例也是�
 </description>
         </item>
         <item>
-        <title>JS 的 Callback, Promise 與 Async/Await -- Callback 篇</title>
-        <link>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/</link>
+        <title>JS 的 Callback, Promise 與 Async/Await -- Promise 篇</title>
+        <link>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-promise-%E7%AF%87/</link>
         <pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate>
         
-        <guid>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/</guid>
+        <guid>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-promise-%E7%AF%87/</guid>
         <description>&lt;h3 id=&#34;施工中敬請期待&#34;&gt;施工中&amp;hellip;敬請期待~~~~~&lt;/h3&gt;
 </description>
         </item>
