@@ -6,7 +6,16 @@
         <description>Recent content on 杜杜的地下室</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Tue, 02 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://justindu1017.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 19 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://justindu1017.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>JS 的 Callback, Promise 與 Async/Await -- Promise 篇</title>
+        <link>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-promise-%E7%AF%87/</link>
+        <pubDate>Fri, 19 Mar 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-promise-%E7%AF%87/</guid>
+        <description>&lt;h3 id=&#34;施工中敬請期待&#34;&gt;施工中&amp;hellip;敬請期待~~~~~&lt;/h3&gt;
+</description>
+        </item>
+        <item>
         <title>JS 的 Callback, Promise 與 Async/Await -- Callback 篇</title>
         <link>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-callback-%E7%AF%87/</link>
         <pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate>
@@ -280,15 +289,6 @@ callback 其實就是 Function 去 call Function，所以下面的範例也是�
 &lt;a href=&#34;https://www.youtube.com/watch?v=8aGhZQkoFbQ&amp;amp;ab_channel=JSConf&#34;&gt;https://www.youtube.com/watch?v=8aGhZQkoFbQ&amp;amp;ab_channel=JSConf&lt;/a&gt;
 &lt;a href=&#34;https://blog.risingstack.com/node-js-async-best-practices-avoiding-callback-hell-node-js-at-scale/&#34;&gt;https://blog.risingstack.com/node-js-async-best-practices-avoiding-callback-hell-node-js-at-scale/&lt;/a&gt;
 &lt;a href=&#34;https://medium.com/@quyetvv/async-flow-from-callback-hell-to-promise-to-async-await-2da3ecfff997&#34;&gt;https://medium.com/@quyetvv/async-flow-from-callback-hell-to-promise-to-async-await-2da3ecfff997&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        <item>
-        <title>JS 的 Callback, Promise 與 Async/Await -- Promise 篇</title>
-        <link>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-promise-%E7%AF%87/</link>
-        <pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate>
-        
-        <guid>https://justindu1017.github.io/p/js-%E7%9A%84-callback-promise-%E8%88%87-async/await-promise-%E7%AF%87/</guid>
-        <description>&lt;h3 id=&#34;施工中敬請期待&#34;&gt;施工中&amp;hellip;敬請期待~~~~~&lt;/h3&gt;
 </description>
         </item>
         <item>
